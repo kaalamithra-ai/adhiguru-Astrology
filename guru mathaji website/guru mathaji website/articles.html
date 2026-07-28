@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Spiritual Articles by Aadhi Guru Mathaji - Divine wisdom, Vedantic insights, and guidance for the spiritual seeker.">
+    <title>Articles | Aadhi Guru Mathaji</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css" />
+    
+    <!-- Page-specific styles -->
+    <style>
+        /* Article Page Styles */
+        .articles-page {
+            padding-top: 120px;
+            min-height: 100vh;
+            background: var(--cream);
+        }
+        .articles-page .page-header {
+            text-align: center;
+            padding: 40px 0 20px;
+        }
+        .articles-page .page-header h1 {
+            font-family: var(--font-heading);
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .articles-page .page-header h1 span {
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .articles-page .page-header p {
+            color: var(--text-light);
+            font-size: 1rem;
+            max-width: 540px;
+            margin: 12px auto 0;
+        }
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 28px;
+            padding: 40px 0 80px;
+        }
+        .article-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+        .article-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--border);
+        }
+        .article-card-img {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, var(--warm), var(--deep));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            font-size: 2.5rem;
+        }
+        .article-card-body {
+            padding: 28px 24px 24px;
+        }
+        .article-card-tag {
+            display: inline-block;
+            padding: 3px 12px;
+            background: rgba(212,168,75,0.1);
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--gold-dark);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        .article-card-body h3 {
+            font-family: var(--font-heading);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px;
+            line-height: 1.35;
+        }
+        .article-card-body .article-meta {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 12px;
+        }
+        .article-card-body .article-meta i {
+            color: var(--gold);
+            margin-right: 4px;
+        }
+        .article-card-body p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+        .article-card-body .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gold-dark);
+            transition: var(--transition);
+        }
+        .article-card-body .read-more:hover {
+            gap: 10px;
+            color: var(--deep);
+        }
+
+        /* Article Modal for full reading */
+        .article-modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: rgba(0,0,0,0.88);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            backdrop-filter: blur(8px);
+            padding: 20px;
+        }
+        .article-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .article-modal {
+            background: var(--cream);
+            border-radius: var(--radius-lg);
+            max-width: 720px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 48px 40px 40px;
+            position: relative;
+            box-shadow: 0 0 0 2px var(--border), 0 20px 60px rgba(0,0,0,0.4);
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .article-modal-overlay.active .article-modal {
+            transform: scale(1) translateY(0);
+        }
+        .article-modal-close {
+            position: absolute;
+            top: 16px;
+            right: 18px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(212,168,75,0.1);
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        .article-modal-close:hover {
+            background: var(--gold);
+            color: var(--deep);
+            transform: rotate(90deg);
+        }
+        .article-modal h2 {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+        .article-modal .article-modal-meta {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .article-modal .article-modal-meta i {
+            color: var(--gold);
+            margin-right: 4px;
+        }
+        .article-modal .article-modal-body p {
+            color: var(--text-light);
+            font-size: 1.02rem;
+            line-height: 1.9;
+            margin-bottom: 16px;
+        }
+        .article-modal .article-modal-om {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--gold);
+            display: block;
+            margin-top: 20px;
+            opacity: 0.5;
+        }
+        .article-modal::-webkit-scrollbar { width: 6px; }
+        .article-modal::-webkit-scrollbar-track { background: rgba(212,168,75,0.06); border-radius: 3px; }
+        .article-modal::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+        @media (max-width:768px) {
+            .articles-page .page-header h1 { font-size: 2.2rem; }
+            .articles-grid { grid-template-columns: 1fr; }
+            .article-modal { padding: 32px 24px 28px; }
+            .article-modal h2 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== CURSOR ==================== -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- ==================== PRELOADER ==================== -->
+    <div class="preloader" id="preloader">
+        <div class="preloader-ring">
+            <div class="ring-inner"></div>
+        </div>
+        <div class="preloader-om">ॐ</div>
+        <p>Aadhi Guru Mathaji</p>
+    </div>
+
+    <!-- ==================== NAVBAR ==================== -->
+    <header class="header" id="header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <img src="images/logo-mathaji.jpg" alt="Aadhi Guru Mathaji" class="logo-img" />
+            </a>
+            <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+            <nav class="nav" id="nav">
+                <ul class="nav-list">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="index.html#about" class="nav-link">About</a></li>
+                    <li><a href="index.html#teachings" class="nav-link">Teachings</a></li>
+                    <li><a href="index.html#gallery" class="nav-link">Gallery</a></li>
+                    <li><a href="index.html#video" class="nav-link">Video</a></li>
+                    <li><a href="index.html#events" class="nav-link">Events</a></li>
+                    <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ==================== ARTICLES PAGE ==================== -->
+    <main class="articles-page">
+        <div class="container">
+            <div class="page-header">
+                <span class="section-om">ॐ</span>
+                <h1>Spiritual <span>Articles</span></h1>
+                <div class="section-line" style="margin:16px auto 0;"></div>
+                <p>Divine wisdom and spiritual insights revealed through the teachings of Aadhi Guru Mathaji.</p>
+            </div>
+
+            <div class="articles-grid" id="articlesGrid">
+                <!-- Articles populated by JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="images/logo-mathaji.jpg" alt="Aadhi Guru Mathaji" class="footer-logo-img" />
+                    <h3>Aadhi Guru Mathaji</h3>
+                    <p>Divine Grace Spiritual Foundation</p>
+                    <p class="footer-motto">"Awaken the Divine Within"</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#about">About</a></li>
+                        <li><a href="index.html#teachings">Teachings</a></li>
+                        <li><a href="index.html#gallery">Gallery</a></li>
+                        <li><a href="index.html#events">Events</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="articles.html">Articles</a></li>
+                        <li><a href="meditation-guides.html">Meditation Guides</a></li>
+                        <li><a href="bhajans.html">Bhajans</a></li>
+                    </ul>
+                </div>
+                <div class="footer-subscribe">
+                    <h4>Subscribe</h4>
+                    <p>Receive daily blessings and spiritual wisdom.</p>
+                    <form class="subscribe-form">
+                        <input type="email" placeholder="Your email" required />
+                        <button type="submit"><i class="fas fa-arrow-right"></i></button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Aadhi Guru Mathaji | Divine Grace Spiritual Foundation</p>
+                <p class="footer-shanti">ॐ शान्तिः शान्तिः शान्तिः</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== BACK TO TOP ==================== -->
+    <button class="back-top" id="backTop" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <script src="js/script.js"></script>
+    
+    <!-- Article data and logic -->
+    <script>
+    (function() {
+        'use strict';
+
+        const articles = [
+            {
+                id: 1,
+                tag: 'Vedanta',
+                title: 'The Nature of the Self: Atman and Brahman',
+                date: 'March 15, 2025',
+                icon: 'fa-om',
+                excerpt: 'Dive deep into the non-dual truth of Advaita Vedanta. Understand the relationship between the individual self (Atman) and the Supreme Reality (Brahman).',
+                content: `<p>The eternal question "Who am I?" has been asked by seekers since time immemorial. In the spiritual tradition of Sanatana Dharma, this question leads us to the ultimate realization of the Self.</p>
+                <p>Atman, the individual self, is not the body, mind, or ego. It is the pure, eternal consciousness that illuminates all experience. Just as a single sun reflects in countless pots of water, the one Supreme Consciousness appears as many individual selves.</p>
+                <p>Brahman is the infinite, all-pervading Reality — the ground of all existence. The Upanishads declare with great emphasis: <em>Tat Tvam Asi</em> — "That Thou Art." This Mahavakya (great saying) reveals the identity of Atman and Brahman.</p>
+                <p>When this truth is directly realized, the illusion of separateness dissolves, and one abides in the bliss of non-dual awareness. This is the goal of human life — Moksha, liberation from the cycle of birth and death.</p>
+                <p>Mathaji guides seekers on this profound journey inward, helping them peel away the layers of conditioning to reveal the radiant Self within.</p>`
+            },
+            {
+                id: 2,
+                tag: 'Meditation',
+                title: 'The Art of Inner Stillness: A Guide to Dhyana',
+                date: 'February 28, 2025',
+                icon: 'fa-spa',
+                excerpt: 'Discover the transformative power of meditation. Learn how to quiet the mind and experience the peace that lies beyond thought.',
+                content: `<p>In the relentless rush of modern life, the mind is constantly agitated — jumping from past to future, caught in a web of desires and anxieties. Meditation (Dhyana) is the art of returning to the present moment, to the stillness that is our true nature.</p>
+                <p>Mathaji teaches that meditation is not about forcing the mind to be blank, but about gently training it to rest in awareness. Begin by finding a comfortable seated posture. Close your eyes and bring your attention to the natural flow of your breath.</p>
+                <p>As thoughts arise, do not fight them or follow them. Simply observe them like clouds passing in the sky, and return your attention to the breath. With practice, the gaps between thoughts become longer, and you taste the peace of pure awareness.</p>
+                <p>Regular meditation transforms your life. You become less reactive, more centered, and deeply connected to the divine presence within. Even 15 minutes daily can bring profound changes.</p>`
+            },
+            {
+                id: 3,
+                tag: 'Bhakti',
+                title: 'The Path of Devotion: Love as the Highest Sadhana',
+                date: 'January 20, 2025',
+                icon: 'fa-heart',
+                excerpt: 'Explore the path of Bhakti Yoga — where the heart leads the way to God. Love, surrender, and devotion as the most direct spiritual practice.',
+                content: `<p>Bhakti Yoga is the path of love and devotion. It is the heart's direct journey to the Divine, requiring no intellectual understanding or rigorous physical practice — only sincere love.</p>
+                <p>Mathaji explains that the soul's natural relationship with the Supreme is one of love. Just as a river flows irresistibly toward the ocean, the loving heart moves toward God. Bhakti is expressed through chanting the Divine Name, singing bhajans, prayer, and constant remembrance.</p>
+                <p>The nine modes of Bhakti (Navavidha Bhakti) include: listening to divine glories (Shravana), chanting (Kirtana), remembering (Smarana), serving (Pada Seva), worship (Archana), salutation (Vandana), servitude (Dasya), friendship (Sakhya), and complete surrender (Atma Nivedana).</p>
+                <p>Any one of these paths, practiced with sincerity, can lead to the highest realization. The beauty of Bhakti is that it is accessible to everyone, regardless of age, education, or background.</p>`
+            },
+            {
+                id: 4,
+                tag: 'Karma Yoga',
+                title: 'Transforming Work into Worship: The Teachings of Karma Yoga',
+                date: 'December 10, 2024',
+                icon: 'fa-hand-holding-heart',
+                excerpt: 'Learn how to turn every action into a spiritual offering. The Bhagavad Gita\'s timeless wisdom on work without attachment.',
+                content: `<p>The Bhagavad Gita teaches that no one can remain without action for even a moment. Karma Yoga — the yoga of selfless action — is the path of performing one's duties without attachment to the results.</p>
+                <p>Lord Krishna instructs Arjuna: "You have a right to perform your prescribed duties, but you are not entitled to the fruits of your actions" (Gita 2.47). This revolutionary teaching frees us from the anxiety of outcomes and transforms work into worship.</p>
+                <p>Mathaji emphasizes that every action can be offered to the Divine. Whether you are cooking, cleaning, working at an office, or raising children, each activity becomes a sadhana when done with awareness, dedication, and a spirit of surrender.</p>
+                <p>The key is to act without ego, without the sense of "I am the doer." Recognize that all actions are performed by the forces of nature (Prakriti), and you are the eternal witness (Purusha). This shift in perspective brings immense peace and effectiveness.</p>`
+            },
+            {
+                id: 5,
+                tag: 'Self-Realization',
+                title: 'Beyond the Mind: Discovering Your True Nature',
+                date: 'November 5, 2024',
+                icon: 'fa-seedling',
+                excerpt: 'A profound exploration of Self-inquiry. Who are you beyond your name, body, thoughts, and beliefs?',
+                content: `<p>We spend our entire lives identifying with the body, mind, and ego. We say "I am tired," "I am happy," "I am a doctor," "I am a parent." But who is the 'I' that experiences all these states?</p>
+                <p>Self-inquiry (Atma Vichara) is the practice of turning the attention back on itself to discover the source of the 'I' thought. This method, taught by Ramana Maharshi and echoed by Mathaji, is a direct path to Self-Realization.</p>
+                <p>Ask yourself: "Who am I?" Reject all answers that arise. You are not the body, not the mind, not the intellect, not the ego. When all these layers are peeled away, what remains is pure Awareness — Sat-Chit-Ananda (Existence-Consciousness-Bliss).</p>
+                <p>This realization is not a mental concept but a direct experience. It is the ending of all seeking, the peace that passes all understanding, and the freedom that is your birthright.</p>`
+            },
+            {
+                id: 6,
+                tag: 'Compassion',
+                title: 'Seva: The Sacred Art of Selfless Service',
+                date: 'October 18, 2024',
+                icon: 'fa-hands-helping',
+                excerpt: 'Compassion in action. How serving others becomes the highest form of worship and spiritual practice.',
+                content: `<p>Seva (selfless service) is considered one of the highest spiritual practices in the Sanatana Dharma tradition. When we serve others without any expectation of reward, we recognize the divine presence in all beings.</p>
+                <p>Mathaji teaches that the best way to serve God is to serve humanity. The hungry, the sick, the poor, and the suffering are not separate from the Divine. When you feed a hungry person, you feed the Lord Himself. When you comfort a distressed soul, you comfort the Supreme.</p>
+                <p>True Seva is performed with humility, without any sense of superiority. The server, the served, and the service are all one in the ultimate Reality. This understanding dissolves the ego and opens the heart to boundless compassion.</p>
+                <p>Mathaji's charitable initiatives include free meal programs (Anna Dhanam), educational support for children, medical camps, and spiritual counseling — all offered as an expression of divine love in action.</p>`
+            }
+        ];
+
+        const grid = document.getElementById('articlesGrid');
+
+        // Render articles
+        articles.forEach(article => {
+            const card = document.createElement('div');
+            card.className = 'article-card';
+            card.dataset.articleId = article.id;
+            card.innerHTML = `
+                <div class="article-card-img">
+                    <i class="fas ${article.icon}"></i>
+                </div>
+                <div class="article-card-body">
+                    <span class="article-card-tag">${article.tag}</span>
+                    <h3>${article.title}</h3>
+                    <div class="article-meta">
+                        <i class="fas fa-calendar-alt"></i> ${article.date}
+                    </div>
+                    <p>${article.excerpt}</p>
+                    <a href="#" class="read-more" data-id="${article.id}">
+                        Read Article <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+
+        // Modal logic
+        function openArticleModal(articleId) {
+            const article = articles.find(a => a.id === parseInt(articleId));
+            if (!article) return;
+
+            const existing = document.querySelector('.article-modal-overlay');
+            if (existing) existing.remove();
+
+            const overlay = document.createElement('div');
+            overlay.className = 'article-modal-overlay';
+            overlay.innerHTML = `
+                <div class="article-modal">
+                    <button class="article-modal-close">&times;</button>
+                    <h2>${article.title}</h2>
+                    <div class="article-modal-meta">
+                        <i class="fas fa-tag"></i> ${article.tag} &nbsp;&nbsp;
+                        <i class="fas fa-calendar-alt"></i> ${article.date}
+                    </div>
+                    <div class="article-modal-body">
+                        ${article.content}
+                    </div>
+                    <span class="article-modal-om">ॐ</span>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+            document.body.style.overflow = 'hidden';
+            requestAnimationFrame(() => overlay.classList.add('active'));
+
+            const close = () => {
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+                setTimeout(() => overlay.remove(), 300);
+            };
+
+            overlay.querySelector('.article-modal-close').addEventListener('click', close);
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) close();
+            });
+            document.addEventListener('keydown', function escHandler(e) {
+                if (e.key === 'Escape') { close(); document.removeEventListener('keydown', escHandler); }
+            });
+        }
+
+        // Delegate click events for read-more links
+        grid.addEventListener('click', (e) => {
+            const link = e.target.closest('.read-more');
+            if (link) {
+                e.preventDefault();
+                openArticleModal(link.dataset.id);
+            }
+        });
+    })();
+    </script>
+</body>
+</html>
+

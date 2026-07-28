@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Meditation Guides by Aadhi Guru Mathaji - Step-by-step meditation practices for inner peace and spiritual awakening.">
+    <title>Meditation Guides | Aadhi Guru Mathaji</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css" />
+
+    <!-- Page-specific styles -->
+    <style>
+        .meditation-page {
+            padding-top: 120px;
+            min-height: 100vh;
+            background: var(--cream);
+        }
+        .meditation-page .page-header {
+            text-align: center;
+            padding: 40px 0 20px;
+        }
+        .meditation-page .page-header h1 {
+            font-family: var(--font-heading);
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .meditation-page .page-header h1 span {
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .meditation-page .page-header p {
+            color: var(--text-light);
+            font-size: 1rem;
+            max-width: 540px;
+            margin: 12px auto 0;
+        }
+
+        .meditation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 28px;
+            padding: 40px 0 80px;
+        }
+
+        .meditation-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+        .meditation-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--border);
+        }
+        .meditation-card-header {
+            padding: 32px 28px 20px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(212,168,75,0.06), rgba(212,168,75,0.12));
+            position: relative;
+        }
+        .meditation-card-header .guide-icon {
+            width: 72px;
+            height: 72px;
+            background: var(--gold-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+        .meditation-card-header .guide-icon i {
+            font-size: 2rem;
+            color: var(--deep);
+        }
+        .meditation-card-header .guide-level {
+            display: inline-block;
+            padding: 3px 14px;
+            background: rgba(212,168,75,0.15);
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--gold-dark);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .meditation-card-header h3 {
+            font-family: var(--font-heading);
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text);
+            margin: 16px 0 8px;
+        }
+        .meditation-card-header .guide-duration {
+            font-size: 0.82rem;
+            color: var(--text-light);
+        }
+        .meditation-card-header .guide-duration i {
+            color: var(--gold);
+            margin-right: 4px;
+        }
+        .meditation-card-body {
+            padding: 20px 28px 28px;
+        }
+        .meditation-card-body p {
+            color: var(--text-light);
+            font-size: 0.92rem;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+        .meditation-card-body .step-list {
+            list-style: none;
+            padding: 0;
+        }
+        .meditation-card-body .step-list li {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(212,168,75,0.08);
+            font-size: 0.88rem;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+        .meditation-card-body .step-list li:last-child {
+            border-bottom: none;
+        }
+        .meditation-card-body .step-num {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            background: var(--gold-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--deep);
+            margin-top: 1px;
+        }
+
+        /* Guide Detail Modal */
+        .guide-modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: rgba(0,0,0,0.88);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            backdrop-filter: blur(8px);
+            padding: 20px;
+        }
+        .guide-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .guide-modal {
+            background: var(--cream);
+            border-radius: var(--radius-lg);
+            max-width: 720px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 48px 40px 40px;
+            position: relative;
+            box-shadow: 0 0 0 2px var(--border), 0 20px 60px rgba(0,0,0,0.4);
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .guide-modal-overlay.active .guide-modal {
+            transform: scale(1) translateY(0);
+        }
+        .guide-modal-close {
+            position: absolute;
+            top: 16px;
+            right: 18px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(212,168,75,0.1);
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        .guide-modal-close:hover {
+            background: var(--gold);
+            color: var(--deep);
+            transform: rotate(90deg);
+        }
+        .guide-modal h2 {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        .guide-modal .guide-modal-meta {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .guide-modal .guide-modal-body h4 {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            color: var(--gold-dark);
+            margin: 20px 0 12px;
+        }
+        .guide-modal .guide-modal-body p {
+            color: var(--text-light);
+            font-size: 1rem;
+            line-height: 1.9;
+            margin-bottom: 12px;
+        }
+        .guide-modal .guide-modal-body ol {
+            padding-left: 20px;
+            margin-bottom: 16px;
+        }
+        .guide-modal .guide-modal-body ol li {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+        .guide-modal .guide-modal-om {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--gold);
+            display: block;
+            margin-top: 20px;
+            opacity: 0.5;
+        }
+        .guide-modal::-webkit-scrollbar { width: 6px; }
+        .guide-modal::-webkit-scrollbar-track { background: rgba(212,168,75,0.06); border-radius: 3px; }
+        .guide-modal::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+        @media (max-width:768px) {
+            .meditation-page .page-header h1 { font-size: 2.2rem; }
+            .meditation-grid { grid-template-columns: 1fr; }
+            .guide-modal { padding: 32px 24px 28px; }
+            .guide-modal h2 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== CURSOR ==================== -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- ==================== PRELOADER ==================== -->
+    <div class="preloader" id="preloader">
+        <div class="preloader-ring">
+            <div class="ring-inner"></div>
+        </div>
+        <div class="preloader-om">ॐ</div>
+        <p>Aadhi Guru Mathaji</p>
+    </div>
+
+    <!-- ==================== NAVBAR ==================== -->
+    <header class="header" id="header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <img src="images/logo-mathaji.jpg" alt="Aadhi Guru Mathaji" class="logo-img" />
+            </a>
+            <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+            <nav class="nav" id="nav">
+                <ul class="nav-list">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="index.html#about" class="nav-link">About</a></li>
+                    <li><a href="index.html#teachings" class="nav-link">Teachings</a></li>
+                    <li><a href="index.html#gallery" class="nav-link">Gallery</a></li>
+                    <li><a href="index.html#video" class="nav-link">Video</a></li>
+                    <li><a href="index.html#events" class="nav-link">Events</a></li>
+                    <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ==================== MEDITATION GUIDES PAGE ==================== -->
+    <main class="meditation-page">
+        <div class="container">
+            <div class="page-header">
+                <span class="section-om">ॐ</span>
+                <h1>Meditation <span>Guides</span></h1>
+                <div class="section-line" style="margin:16px auto 0;"></div>
+                <p>Step-by-step meditation practices guided by the wisdom of Aadhi Guru Mathaji.</p>
+            </div>
+
+            <div class="meditation-grid" id="meditationGrid">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="images/logo-mathaji.jpg" alt="Aadhi Guru Mathaji" class="footer-logo-img" />
+                    <h3>Aadhi Guru Mathaji</h3>
+                    <p>Divine Grace Spiritual Foundation</p>
+                    <p class="footer-motto">"Awaken the Divine Within"</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#about">About</a></li>
+                        <li><a href="index.html#teachings">Teachings</a></li>
+                        <li><a href="index.html#gallery">Gallery</a></li>
+                        <li><a href="index.html#events">Events</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="articles.html">Articles</a></li>
+                        <li><a href="meditation-guides.html">Meditation Guides</a></li>
+                        <li><a href="bhajans.html">Bhajans</a></li>
+                    </ul>
+                </div>
+                <div class="footer-subscribe">
+                    <h4>Subscribe</h4>
+                    <p>Receive daily blessings and spiritual wisdom.</p>
+                    <form class="subscribe-form">
+                        <input type="email" placeholder="Your email" required />
+                        <button type="submit"><i class="fas fa-arrow-right"></i></button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Aadhi Guru Mathaji | Divine Grace Spiritual Foundation</p>
+                <p class="footer-shanti">ॐ शान्तिः शान्तिः शान्तिः</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== BACK TO TOP ==================== -->
+    <button class="back-top" id="backTop" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <script src="js/script.js"></script>
+
+    <script>
+    (function() {
+        'use strict';
+
+        const guides = [
+            {
+                id: 1,
+                icon: 'fa-spa',
+                level: 'Beginner',
+                title: 'Breath Awareness Meditation (Anapanasati)',
+                duration: '10-15 minutes',
+                summary: 'The foundational practice of watching the breath to calm the mind and develop focused awareness.',
+                steps: [
+                    'Find a quiet, comfortable place to sit. Use a cushion or chair with your spine erect but relaxed.',
+                    'Close your eyes gently and take three deep breaths, exhaling slowly to release tension.',
+                    'Bring your attention to the natural flow of your breath at the nostrils or abdomen.',
+                    'Simply observe the sensation of breathing — the coolness of inhalation, the warmth of exhalation.',
+                    'When thoughts arise (and they will), do not judge or follow them. Gently return attention to the breath.',
+                    'Start with 5 minutes and gradually increase to 15 minutes. Practice daily for best results.'
+                ],
+                details: `<p>Anapanasati is the most fundamental meditation practice taught by the Buddha and emphasized by Mathaji as the gateway to deeper states of consciousness. By anchoring awareness in the breath, we develop the qualities of mindfulness (sati) and concentration (samadhi).</p>
+                <h4>Benefits of This Practice</h4>
+                <p>Regular practice of breath awareness meditation reduces stress, improves focus, stabilizes emotions, and gradually leads to profound insights into the nature of mind and reality.</p>
+                <h4>Common Challenges</h4>
+                <ol>
+                    <li><strong>Restlessness:</strong> The mind may resist sitting still. Be patient — this is natural. Consistency is more important than duration.</li>
+                    <li><strong>Sleepiness:</strong> If you feel drowsy, open your eyes slightly, straighten your posture, or practice at a different time of day.</li>
+                    <li><strong>Wandering thoughts:</strong> This is not failure. Each time you notice wandering and return to the breath, you are strengthening your mindfulness muscle.</li>
+                </ol>
+                <p>Mathaji reminds us: "The breath is the bridge between the body and the spirit. Watch it, and you will discover the peace that lies beyond the mind."</p>`
+            },
+            {
+                id: 2,
+                icon: 'fa-heart',
+                level: 'Intermediate',
+                title: 'Loving-Kindness Meditation (Metta Bhavana)',
+                duration: '20-25 minutes',
+                summary: 'Cultivate unconditional love and compassion for yourself and all beings through heart-centered meditation.',
+                steps: [
+                    'Sit comfortably with eyes closed. Take a few moments to arrive in the present moment with a few deep breaths.',
+                    'Bring to mind your own heart center. Silently repeat: "May I be happy. May I be peaceful. May I be free from suffering." (3-5 minutes)',
+                    'Visualize a beloved person — a teacher, parent, or close friend who has shown you kindness. Offer them the same wishes: "May you be happy. May you be peaceful. May you be free from suffering." (5 minutes)',
+                    'Now bring to mind a neutral person — someone you see regularly but have no strong feelings about. Extend the same loving wishes to them.',
+                    'If possible, gradually extend this love to someone you have difficulty with, wishing them well from your heart.',
+                    'Finally, extend these wishes to all beings everywhere — in all directions, without exception. Rest in this boundless love.'
+                ],
+                details: `<p>Metta Bhavana is a profound practice that softens the heart and dissolves the barriers we create between ourselves and others. Mathaji teaches that love is the very fabric of existence, and this meditation helps us experience that unity directly.</p>
+                <h4>The Power of Loving-Kindness</h4>
+                <p>Scientific studies show that regular Metta practice increases positive emotions, reduces social isolation, and even slows cellular aging. On a spiritual level, it directly counteracts the ego's tendency toward separation and judgment.</p>
+                <h4>Integration into Daily Life</h4>
+                <p>Try carrying the feeling of metta with you throughout the day. While waiting in line, in traffic, or before meals, silently offer loving wishes to those around you. This transforms ordinary moments into opportunities for heart-opening.</p>`
+            },
+            {
+                id: 3,
+                icon: 'fa-eye',
+                level: 'Advanced',
+                title: 'Self-Inquiry Meditation (Atma Vichara)',
+                duration: '20-30 minutes',
+                summary: 'The direct path to Self-Realization — turning awareness back upon itself to discover your true nature.',
+                steps: [
+                    'Sit in your meditation posture. Close your eyes and allow the mind to settle naturally for a few minutes.',
+                    'Bring your attention to the feeling of "I" or "I am" — the sense of existing, without any thoughts or labels.',
+                    'Gently ask yourself: "Who am I?" Not as a mental question, but as a deep investigation into the source of the "I" feeling.',
+                    'When thoughts arise (such as "I am the body," "I am sad," "I am thinking"), ask: "To whom does this thought appear?" The answer is "To me." Then ask: "Who am I?"',
+                    'Reject all answers that come from the mind. You are not the body, not the mind, not the emotions. What remains when all these are negated?',
+                    'Rest in that which cannot be named — pure Awareness. When the mind becomes active again, repeat the inquiry.'
+                ],
+                details: `<p>Atma Vichara is the jewel of Advaita Vedanta — the most direct and powerful method for Self-Realization. Popularized by Sri Ramana Maharshi and taught by Mathaji in its purest form, this inquiry cuts through all spiritual concepts and leads directly to experiential knowledge of the Self.</p>
+                <h4>Important Guidance</h4>
+                <p>This is not a mental exercise but a deep, sustained attention to the source of consciousness. Do not expect a "result" — the practice itself is the goal. Each moment of self-attention is a moment of abiding in your true nature.</p>
+                <h4>When to Practice</h4>
+                <p>This meditation is best practiced when the mind is already relatively calm. It can be done after 10-15 minutes of breath meditation. With regular practice, the inquiry becomes continuous — even in daily activities, the sense of "Who am I?" remains alive.</p>`
+            },
+            {
+                id: 4,
+                icon: 'fa-fire',
+                level: 'Beginner',
+                title: 'Walking Meditation (Chankramana)',
+                duration: '15-20 minutes',
+                summary: 'A moving meditation that integrates mindfulness with the natural rhythm of walking.',
+                steps: [
+                    'Find a quiet path of about 20-30 paces where you can walk back and forth without distractions.',
+                    'Stand still at one end. Take a few conscious breaths, feeling the ground beneath your feet.',
+                    'Begin walking at a natural, slightly slower pace. Bring full attention to the experience of walking.',
+                    'Notice the lifting of one foot, the moving forward, the placing down, the shifting of weight — each phase distinctly.',
+                    'When the mind wanders, gently return attention to the sensations of walking. You can mentally note "lifting, moving, placing."',
+                    'At the end of the path, pause mindfully, turn slowly, and continue the practice in the opposite direction.'
+                ],
+                details: `<p>Walking meditation is an excellent practice for those who find sitting still challenging, or as a complement to seated meditation. Mathaji recommends alternating 15 minutes of sitting with 15 minutes of walking meditation for a balanced practice session.</p>
+                <h4>Benefits</h4>
+                <p>Walking meditation develops mindfulness in motion, making it easier to carry meditative awareness into daily activities. It improves circulation, aids digestion, and can be practiced anywhere — in a garden, hallway, or park.</p>
+                <h4>Tips from Mathaji</h4>
+                <p>"Walk as if the earth is holy ground. Each step is a kiss to Mother Earth. Walk with reverence, and the entire world becomes a temple."</p>`
+            },
+            {
+                id: 5,
+                icon: 'fa-sun',
+                level: 'Intermediate',
+                title: 'Chakra Meditation: Awakening the Energy Centers',
+                duration: '25-30 minutes',
+                summary: 'Journey through the seven chakras, balancing and awakening the subtle energy system of the body.',
+                steps: [
+                    'Sit comfortably with spine erect. Take several deep breaths, grounding yourself in your body.',
+                    'Bring attention to the base of the spine (Muladhara Chakra). Visualize a spinning red wheel of light. Repeat silently: "I am grounded. I am safe." Stay for 3 minutes.',
+                    'Move to the lower abdomen (Svadhisthana Chakra). Visualize an orange wheel. Repeat: "I honor my emotions. I am creative." Stay for 3 minutes.',
+                    'Move to the solar plexus (Manipura Chakra). Visualize a bright yellow wheel. Repeat: "I am powerful. I am confident." Stay for 3 minutes.',
+                    'Move to the heart center (Anahata Chakra). Visualize a green wheel of light. Repeat: "I love unconditionally. I am compassion." Stay for 3 minutes.',
+                    'Move to the throat (Vishuddha Chakra). Visualize a blue wheel. Repeat: "I speak my truth. I communicate clearly." Stay for 3 minutes.',
+                    'Move to the third eye (Ajna Chakra). Visualize an indigo wheel. Repeat: "I see clearly. I am intuitive." Stay for 3 minutes.',
+                    'Move to the crown (Sahasrara Chakra). Visualize a violet or white thousand-petaled lotus. Repeat: "I am one with all. I am divine." Stay for 5 minutes in silence.'
+                ],
+                details: `<p>Chakra meditation is a powerful tantric practice for harmonizing the body's subtle energy system. Each chakra corresponds to specific physical, emotional, and spiritual aspects of our being.</p>
+                <h4>Understanding the Chakras</h4>
+                <p>The seven main chakras run along the spine from the base to the crown of the head. When energy flows freely through these centers, we experience health, vitality, and spiritual awakening. Blockages manifest as physical or emotional imbalances.</p>
+                <h4>Mathaji's Guidance</h4>
+                <p>"The chakras are not merely energy centers — they are gateways to higher consciousness. As you purify and awaken each one, you unlock new dimensions of awareness and power." Regular practice of chakra meditation leads to profound healing and spiritual transformation.</p>`
+            },
+            {
+                id: 6,
+                icon: 'fa-infinity',
+                level: 'All Levels',
+                title: 'OM Meditation: The Sound of the Universe',
+                duration: '10-20 minutes',
+                summary: 'The practice of chanting and meditating on the primordial sound OM, the vibration of cosmic creation.',
+                steps: [
+                    'Sit in a comfortable meditation posture. Close your eyes and take several deep, calming breaths.',
+                    'Take a deep breath in. On the exhale, chant a long, resonant "Aaaaa" (as in "father"). Feel the vibration in your lower abdomen and chest.',
+                    'Without taking a new breath, let the sound transition into a deep "Uuuuu" (as in "moon"). Feel the vibration rising through your throat.',
+                    'Still on the same breath, let the sound transition into "Mmmmm" — closing the lips and letting the vibration resonate throughout your skull and entire body.',
+                    'After the "Mmmm," breathe in and feel the silence that follows. This silence is the fourth part of OM — the unmanifest, the source of all sound.',
+                    'Repeat the full cycle 5-11 times, then sit in silence for 5-10 minutes, resting in the vibration and the peace that follows.'
+                ],
+                details: `<p>The sacred syllable OM (Pranava) is the primordial vibration from which the entire universe manifests. The Mandukya Upanishad describes OM as comprising three sounds — A, U, M — representing the three states of consciousness: waking (Jagrat), dreaming (Svapna), and deep sleep (Sushupti). The silence beyond the three sounds represents Turiya, the fourth state of pure consciousness.</p>
+                <h4>The Power of OM</h4>
+                <p>Chanting OM synchronizes brain waves, slows the heart rate, and creates a profound sense of peace and harmony. It cleanses the atmosphere and elevates the consciousness of both the chanter and all who hear it.</p>
+                <h4>Mathaji's Teaching</h4>
+                <p>"OM is not just a sound — it is the very fabric of existence. When you chant OM, you are not creating the vibration; you are tuning yourself to the cosmic vibration that is already present. You are remembering your true nature as that eternal, blissful awareness." Practice OM meditation daily and experience the gradual unfolding of your highest potential.</p>`
+            }
+        ];
+
+        const grid = document.getElementById('meditationGrid');
+
+        guides.forEach(guide => {
+            const card = document.createElement('div');
+            card.className = 'meditation-card';
+            card.dataset.guideId = guide.id;
+            
+            let stepsHtml = '';
+            guide.steps.forEach((step, i) => {
+                stepsHtml += `<li><span class="step-num">${i + 1}</span><span>${step}</span></li>`;
+            });
+
+            card.innerHTML = `
+                <div class="meditation-card-header">
+                    <div class="guide-icon"><i class="fas ${guide.icon}"></i></div>
+                    <span class="guide-level">${guide.level}</span>
+                    <h3>${guide.title}</h3>
+                    <div class="guide-duration"><i class="fas fa-clock"></i> ${guide.duration}</div>
+                </div>
+                <div class="meditation-card-body">
+                    <p>${guide.summary}</p>
+                    <ul class="step-list">${stepsHtml}</ul>
+                </div>
+            `;
+
+            card.addEventListener('click', () => openGuideModal(guide.id));
+            grid.appendChild(card);
+        });
+
+        function openGuideModal(guideId) {
+            const guide = guides.find(g => g.id === guideId);
+            if (!guide) return;
+
+            const existing = document.querySelector('.guide-modal-overlay');
+            if (existing) existing.remove();
+
+            const overlay = document.createElement('div');
+            overlay.className = 'guide-modal-overlay';
+            overlay.innerHTML = `
+                <div class="guide-modal">
+                    <button class="guide-modal-close">&times;</button>
+                    <h2>${guide.title}</h2>
+                    <div class="guide-modal-meta">
+                        <i class="fas fa-layer-group"></i> ${guide.level} &nbsp;&nbsp;
+                        <i class="fas fa-clock"></i> ${guide.duration}
+                    </div>
+                    <div class="guide-modal-body">
+                        ${guide.details}
+                    </div>
+                    <span class="guide-modal-om">ॐ</span>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+            document.body.style.overflow = 'hidden';
+            requestAnimationFrame(() => overlay.classList.add('active'));
+
+            const close = () => {
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+                setTimeout(() => overlay.remove(), 300);
+            };
+
+            overlay.querySelector('.guide-modal-close').addEventListener('click', close);
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) close();
+            });
+            document.addEventListener('keydown', function escHandler(e) {
+                if (e.key === 'Escape') { close(); document.removeEventListener('keydown', escHandler); }
+            });
+        }
+    })();
+    </script>
+</body>
+</html>
+

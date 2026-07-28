@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Devotional Bhajans - Sacred hymns and spiritual songs dedicated to the Divine, curated by Aadhi Guru Mathaji.">
+    <title>Bhajans | Aadhi Guru Mathaji</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css" />
+
+    <!-- Page-specific styles -->
+    <style>
+        .bhajans-page {
+            padding-top: 120px;
+            min-height: 100vh;
+            background: var(--cream);
+        }
+        .bhajans-page .page-header {
+            text-align: center;
+            padding: 40px 0 20px;
+        }
+        .bhajans-page .page-header h1 {
+            font-family: var(--font-heading);
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .bhajans-page .page-header h1 span {
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .bhajans-page .page-header p {
+            color: var(--text-light);
+            font-size: 1rem;
+            max-width: 540px;
+            margin: 12px auto 0;
+        }
+
+        .bhajan-filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin: 30px 0 10px;
+        }
+        .bhajan-filter-btn {
+            padding: 8px 22px;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            background: white;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .bhajan-filter-btn:hover,
+        .bhajan-filter-btn.active {
+            background: var(--gold-gradient);
+            color: var(--deep);
+            border-color: var(--gold);
+        }
+
+        .bhajans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 28px;
+            padding: 30px 0 80px;
+        }
+
+        .bhajan-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+        .bhajan-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--border);
+        }
+        .bhajan-card-top {
+            padding: 28px 24px 16px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(212,168,75,0.05), rgba(212,168,75,0.1));
+            position: relative;
+        }
+        .bhajan-card-top .bhajan-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--gold-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px;
+        }
+        .bhajan-card-top .bhajan-icon i {
+            font-size: 1.6rem;
+            color: var(--deep);
+        }
+        .bhajan-card-top .bhajan-deity {
+            display: inline-block;
+            padding: 3px 14px;
+            background: rgba(212,168,75,0.15);
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--gold-dark);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .bhajan-card-top h3 {
+            font-family: var(--font-heading);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text);
+            margin: 12px 0 4px;
+        }
+        .bhajan-card-top .bhajan-language {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+        .bhajan-card-body {
+            padding: 16px 24px 24px;
+        }
+        .bhajan-card-body p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            line-height: 1.7;
+            margin-bottom: 14px;
+        }
+        .bhajan-audio-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            background: rgba(212,168,75,0.06);
+            border-radius: var(--radius);
+            margin-bottom: 14px;
+        }
+        .bhajan-audio-row audio {
+            flex: 1;
+            height: 40px;
+        }
+        .bhajan-audio-row audio::-webkit-media-controls-panel {
+            background: rgba(212,168,75,0.08);
+        }
+        .bhajan-lyrics-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gold-dark);
+            cursor: pointer;
+            transition: var(--transition);
+            background: none;
+            border: none;
+            padding: 0;
+        }
+        .bhajan-lyrics-btn:hover {
+            gap: 10px;
+            color: var(--deep);
+        }
+
+        /* Lyrics Modal */
+        .lyrics-modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: rgba(0,0,0,0.88);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            backdrop-filter: blur(8px);
+            padding: 20px;
+        }
+        .lyrics-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .lyrics-modal {
+            background: var(--cream);
+            border-radius: var(--radius-lg);
+            max-width: 620px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 48px 40px 40px;
+            position: relative;
+            box-shadow: 0 0 0 2px var(--border), 0 20px 60px rgba(0,0,0,0.4);
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .lyrics-modal-overlay.active .lyrics-modal {
+            transform: scale(1) translateY(0);
+        }
+        .lyrics-modal-close {
+            position: absolute;
+            top: 16px;
+            right: 18px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(212,168,75,0.1);
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        .lyrics-modal-close:hover {
+            background: var(--gold);
+            color: var(--deep);
+            transform: rotate(90deg);
+        }
+        .lyrics-modal h2 {
+            font-family: var(--font-heading);
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text);
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .lyrics-modal .lyrics-subtitle {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .lyrics-modal .lyrics-text {
+            font-style: italic;
+            line-height: 2;
+            color: var(--text-light);
+            font-size: 0.95rem;
+            white-space: pre-line;
+        }
+        .lyrics-modal .lyrics-text .lyrics-om {
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--gold);
+            display: block;
+            margin-bottom: 12px;
+            font-style: normal;
+        }
+        .lyrics-modal::-webkit-scrollbar { width: 6px; }
+        .lyrics-modal::-webkit-scrollbar-track { background: rgba(212,168,75,0.06); border-radius: 3px; }
+        .lyrics-modal::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+        @media (max-width:768px) {
+            .bhajans-page .page-header h1 { font-size: 2.2rem; }
+            .bhajans-grid { grid-template-columns: 1fr; }
+            .lyrics-modal { padding: 32px 24px 28px; }
+            .lyrics-modal h2 { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== CURSOR ==================== -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- ==================== PRELOADER ==================== -->
+    <div class="preloader" id="preloader">
+        <div class="preloader-ring">
+            <div class="ring-inner"></div>
+        </div>
+        <div class="preloader-om">ॐ</div>
+        <p>Aadhi Guru Mathaji</p>
+    </div>
+
+    <!-- ==================== NAVBAR ==================== -->
+    <header class="header" id="header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <img src="images/logo-mathaji.jpg" alt="Aadhi Guru Mathaji" class="logo-img" />
+            </a>
+            <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+            <nav class="nav" id="nav">
+                <ul class="nav-list">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="index.html#about" class="nav-link">About</a></li>
+                    <li><a href="index.html#teachings" class="nav-link">Teachings</a></li>
+                    <li><a href="index.html#gallery" class="nav-link">Gallery</a></li>
+                    <li><a href="index.html#video" class="nav-link">Video</a></li>
+                    <li><a href="index.html#events" class="nav-link">Events</a></li>
+                    <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ==================== BHAJANS PAGE ==================== -->
+    <main class="bhajans-page">
+        <div class="container">
+            <div class="page-header">
+                <span class="section-om">ॐ</span>
+                <h1>Devotional <span>Bhajans</span></h1>
+                <div class="section-line" style="margin:16px auto 0;"></div>
+                <p>Sacred hymns and devotional songs that elevate the soul and connect the heart to the Divine.</p>
+            </div>
+
+            <div class="bhajan-filter-bar" id="filterBar">
+                <button class="bhajan-filter-btn active" data-filter="all">All</button>
+                <button class="bhajan-filter-btn" data-filter="Shiva">Shiva</button>
+                <button class="bhajan-filter-btn" data-filter="Vishnu">Vishnu</button>
+                <button class="bhajan-filter-btn" data-filter="Devi">Devi</button>
+                <button class="bhajan-filter-btn" data-filter="Guru">Guru</button>
+                <button class="bhajan-filter-btn" data-filter="Universal">Universal</button>
+            </div>
+
+            <div class="bhajans-grid" id="bhajansGrid">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="images/logo-mathaji.jpg" alt="Aadhi Guru Mathaji" class="footer-logo-img" />
+                    <h3>Aadhi Guru Mathaji</h3>
+                    <p>Divine Grace Spiritual Foundation</p>
+                    <p class="footer-motto">"Awaken the Divine Within"</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#about">About</a></li>
+                        <li><a href="index.html#teachings">Teachings</a></li>
+                        <li><a href="index.html#gallery">Gallery</a></li>
+                        <li><a href="index.html#events">Events</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="articles.html">Articles</a></li>
+                        <li><a href="meditation-guides.html">Meditation Guides</a></li>
+                        <li><a href="bhajans.html">Bhajans</a></li>
+                    </ul>
+                </div>
+                <div class="footer-subscribe">
+                    <h4>Subscribe</h4>
+                    <p>Receive daily blessings and spiritual wisdom.</p>
+                    <form class="subscribe-form">
+                        <input type="email" placeholder="Your email" required />
+                        <button type="submit"><i class="fas fa-arrow-right"></i></button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Aadhi Guru Mathaji | Divine Grace Spiritual Foundation</p>
+                <p class="footer-shanti">ॐ शान्तिः शान्तिः शान्तिः</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== BACK TO TOP ==================== -->
+    <button class="back-top" id="backTop" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <script src="js/script.js"></script>
+
+    <script>
+    (function() {
+        'use strict';
+
+        const bhajans = [
+            {
+                id: 1,
+                deity: 'Shiva',
+                icon: 'fa-om',
+                title: 'Shiva Panchakshara Stotram',
+                language: 'Sanskrit',
+                audioUrl: '../shiva.wav',
+                summary: 'The sacred five-syllable hymn dedicated to Lord Shiva, chanting "Om Namah Shivaya" in its most powerful form.',
+                lyrics: `ॐ नमः शिवाय ।\n\nनागेन्द्रहाराय त्रिलोचनाय\nभस्माङ्गरागाय महेश्वराय ।\nनित्याय शुद्धाय दिगम्बराय\nतस्मै नकाराय नमः शिवाय ॥१॥\n\nॐ नमः शिवाय ।\n\nमन्दाकिनीसलिलचन्दनचर्चिताय\nनन्दीश्वरप्रमथनाथमहेश्वराय ।\nमन्दारपुष्पबहुपुष्पसुपूजिताय\nतस्मै मकाराय नमः शिवाय ॥२॥\n\nॐ नमः शिवाय ।\n\nशिवाय गौरीवदनाब्जवृन्द-\nसूर्याय दक्षाध्वरनाशकाय ।\nश्रीनीलकण्ठाय वृषध्वजाय\nतस्मै शिकाराय नमः शिवाय ॥३॥\n\nॐ नमः शिवाय ।\n\nवसिष्ठकुम्भोद्भवगौतमार्य-\nमुनीन्द्रदेवार्चितशेखराय ।\nचन्द्रार्कवैश्वानरलोचनाय\nतस्मै वकाराय नमः शिवाय ॥४॥\n\nॐ नमः शिवाय ।\n\nयक्षस्वरूपाय जटाधराय\nपिनाकहस्ताय सनातनाय ।\nदिव्याय देवाय दिगम्बराय\nतस्मै यकाराय नमः शिवाय ॥५॥\n\nॐ नमः शिवाय ।`
+            },
+            {
+                id: 2,
+                deity: 'Devi',
+                icon: 'fa-star',
+                title: 'Devi Mahatmyam: Durge Stuti',
+                language: 'Sanskrit / Hindi',
+                audioUrl: '../panchakshari.wav',
+                summary: 'A powerful hymn invoking the Divine Mother Durga for protection, strength, and the removal of all obstacles.',
+                lyrics: `ॐ ऐं ह्रीं क्लीं चामुण्डायै विच्चे ।\n\nया देवी सर्वभूतेषु शक्तिरूपेण संस्थिता ।\नमस्तस्यै नमस्तस्यै नमस्तस्यै नमो नमः ॥\n\nया देवी सर्वभूतेषु बुद्धिरूपेण संस्थिता ।\नमस्तस्यै नमस्तस्यै नमस्तस्यै नमो नमः ॥\n\nया देवी सर्वभूतेषु क्षान्तिरूपेण संस्थिता ।\नमस्तस्यै नमस्तस्यै नमस्तस्यै नमो नमः ॥\n\nया देवी सर्वभूतेषु शान्तिरूपेण संस्थिता ।\नमस्तस्यै नमस्तस्यै नमस्तस्यै नमो नमः ॥\n\nया देवी सर्वभूतेषु श्रद्धारूपेण संस्थिता ।\नमस्तस्यै नमस्तस्यै नमस्तस्यै नमो नमः ॥\n\nसर्वमङ्गलमाङ्गल्ये शिवे सर्वार्थसाधिके ।\nशरण्ये त्र्यम्बके गौरि नारायणि नमोऽस्तु ते ॥`
+            },
+            {
+                id: 3,
+                deity: 'Vishnu',
+                icon: 'fa-sun',
+                title: 'Vishnu Sahasranamam (Excerpt)',
+                language: 'Sanskrit',
+                audioUrl: 'vishnu.wav',
+                summary: 'A selection from the thousand names of Lord Vishnu, the sustainer of the universe, chanted for peace and prosperity.',
+                lyrics: `ॐ नमो भगवते वासुदेवाय ।\n\nशान्ताकारं भुजगशयनं पद्मनाभं सुरेशम्\nविश्वाधारं गगनसदृशं मेघवर्णं शुभाङ्गम् ।\nलक्ष्मीकान्तं कमलनयनं योगिभिर्ध्यानगम्यम्\nवन्दे विष्णुं भवभयहरं सर्वलोकैकनाथम् ॥\n\nॐ विष्णवे नमः ।\nॐ जिष्णवे नमः ।\nॐ विक्रमिणे नमः ।\nॐ व्याघ्रिणे नमः ।\nॐ श्रीधराय नमः ।\nॐ हृषिकेशाय नमः ।\nॐ केशवाय नमः ।\nॐ माधवाय नमः ।\nॐ गोविन्दाय नमः ।\nॐ नारायणाय नमः ।`
+            },
+            {
+                id: 4,
+                deity: 'Guru',
+                icon: 'fa-chalkboard-teacher',
+                title: 'Guru Stotram: Guru Brahma',
+                language: 'Sanskrit',
+                audioUrl: '../GURU.wav',
+                summary: 'The sacred Guru Stotram honoring the spiritual teacher as the embodiment of Brahma, Vishnu, and Shiva.',
+                lyrics: `गुरुर्ब्रह्मा गुरुर्विष्णुः गुरुर्देवो महेश्वरः ।\nगुरुः साक्षात् परं ब्रह्म तस्मै श्री गुरवे नमः ॥\n\nअज्ञानतिमिरान्धस्य ज्ञानाञ्जनशलाकया ।\nचक्षुरुन्मीलितं येन तस्मै श्री गुरवे नमः ॥\n\nगुरुरात्मा गुरुर्विद्या गुरुर्मोक्षः परं गतिः ।\nगुरुर्दुःखक्षमो धाता तस्मै श्री गुरवे नमः ॥\n\nगुरुणा धार्यते विद्या गुरुणा प्राप्यते पदम् ।\nगुरोः कृपा हि सर्वेषां तस्मै श्री गुरवे नमः ॥\n\nगुरुः शिष्यस्य हृदये नित्यं वसति सद्गुरुः ।\nगुरोः प्रसादात् सर्वेषां तस्मै श्री गुरवे नमः ॥`
+            },
+            {
+                id: 5,
+                deity: 'Universal',
+                icon: 'fa-globe',
+                title: 'Shanti Mantra: Universal Peace Prayer',
+                language: 'Sanskrit / English',
+                audioUrl: '../universal.wav',
+                summary: 'A universal peace invocation chanting for peace at all levels — individual, cosmic, and universal.',
+                lyrics: `ॐ द्यौः शान्तिरन्तरिक्षं शान्तिः\nपृथिवी शान्तिरापः शान्तिरोषधयः शान्तिः ।\nवनस्पतयः शान्तिर्विश्वे देवाः शान्तिः\nब्रह्म शान्तिः सर्वं शान्तिः\nशान्तिरेव शान्तिः\nसा मा शान्तिरेधि ॥\n\nॐ शान्तिः शान्तिः शान्तिः ॥\n\nMay there be peace in the heavens,\npeace in the atmosphere,\npeace on earth.\nMay the waters be peaceful,\nmay the herbs be peaceful,\nmay the trees be peaceful.\nMay all the celestial beings be peaceful,\nmay the Supreme Brahman be peaceful.\nMay everything be peaceful,\nand may that very peace come to me.\nOm Peace, Peace, Peace.`
+            },
+            {
+                id: 6,
+                deity: 'Shiva',
+                icon: 'fa-moon',
+                title: 'Lingashtakam',
+                language: 'Sanskrit',
+                audioUrl: '../Lingayath.wav',
+                summary: 'The eight-verse hymn praising the Shiva Linga, the formless symbol of the Supreme Reality.',
+                lyrics: `ॐ नमः शिवाय ।\n\nब्रह्ममुरारि सुरार्चितलिङ्गं\nनिर्मलभासित शोभितलिङ्गम् ।\nजन्मजदुःख विनाशकलिङ्गं\nतत्प्रणमामि सदाशिवलिङ्गम् ॥१॥\n\nदेवमुनि प्रवरार्चितलिङ्गं\nकामदहन करुणाकरलिङ्गम् ।\nरावणदर्प विनाशनलिङ्गं\nतत्प्रणमामि सदाशिवलिङ्गम् ॥२॥\n\nसर्वसुगन्ध सुलेपितलिङ्गं\nबुद्धिविवर्धन कारणलिङ्गम् ।\nसिद्धसुरासुर वन्दितलिङ्गं\nतत्प्रणमामि सदाशिवलिङ्गम् ॥३॥\n\nकनकमहामणि भूषितलिङ्गं\nफणिपति वेष्टित शोभितलिङ्गम् ।\nदक्षसुयज्ञ विनाशनलिङ्गं\nतत्प्रणमामि सदाशिवलिङ्गम् ॥४॥\n\nकुङ्कुमचन्दन लेपितलिङ्गं\nपङ्कजहार सुशोभितलिङ्गम् ।\nसञ्चितपाप विनाशनलिङ्गं\nतत्प्रणमामि सदाशिवलिङ्गम् ॥५॥\n\nदेवगणार्चित सेवितलिङ्गं\nभावैर्भक्तिभिरेव च लिङ्गम् ।\nदिनकरकोटि प्रभाकरलिङ्गं\nतत्प्रणमामि सदाशिवलिङ्गम् ॥६॥\n\nअष्टदलोपरि वेष्टितलिङ्गं\nसर्वसमुद्भव कारणलिङ्गम् ।\nअष्टदरिद्र विनाशनलिङ्गं\nतत्प्रणमामि सदाशिवलिङ्गम् ॥७॥\n\nसुरगुरु सुरवर पूजितलिङ्गं\nसुरवनपुष्प सदार्चितलिङ्गम् ।\nपरात्परं परमात्मकलिङ्गं\nतत्प्रणमामि सदाशिवलिङ्गम् ॥८॥`
+            },
+            {
+                id: 7,
+                deity: 'Devi',
+                icon: 'fa- flower',
+                title: 'Saraswati Vandana',
+                language: 'Sanskrit',
+                audioUrl: '../saraswthi.wav',
+                summary: 'A prayer to Goddess Saraswati, the deity of wisdom, knowledge, and creative arts, seeking blessings for learning.',
+                lyrics: `ॐ ऐं महासरस्वत्यै नमः ।\n\nया कुन्देन्दुतुषारहारधवला या शुभ्रवस्त्रावृता\nया वीणावरदण्डमण्डितकरा या श्वेतपद्मासना ।\nया ब्रह्माच्युतशंकरप्रभृतिभिर्देवैः सदा वन्दिता\nसा मां पातु सरस्वती भगवती निःशेषजाड्यापहा ॥\n\nसरस्वति नमस्तुभ्यं वरदे कामरूपिणि ।\nविद्यारम्भं करिष्यामि सिद्धिर्भवतु मे सदा ॥\n\nॐ ऐं ह्रीं क्लीं महासरस्वत्यै नमः ।`
+            },
+            {
+                id: 8,
+                deity: 'Vishnu',
+                icon: 'fa-feather',
+                title: 'Hare Krishna Mahamantra',
+                language: 'Sanskrit',
+                audioUrl: '../hare krishna.wav',
+                summary: 'The great Mahamantra of deliverance — chanting the holy names of Krishna and Rama for spiritual awakening.',
+                lyrics: `हरे कृष्ण हरे कृष्ण\nकृष्ण कृष्ण हरे हरे\nहरे राम हरे राम\nराम राम हरे हरे ॥\n\nहरे कृष्ण हरे कृष्ण\nकृष्ण कृष्ण हरे हरे\nहरे राम हरे राम\nराम राम हरे हरे ॥\n\nकलौ नष्टे धर्मे जनाः प्रपन्नाः\nकलौ नष्टे धर्मे जनाः प्रपन्नाः\nहरिनामैव केवलम्\nहरिनामैव केवलम्\nहरिनामैव केवलम्\nकलौ नास्त्येव नास्त्येव नास्त्येव गतिरन्यथा ॥`
+            }
+        ];
+
+        const grid = document.getElementById('bhajansGrid');
+        const filterBtns = document.querySelectorAll('.bhajan-filter-btn');
+        let currentFilter = 'all';
+
+        function renderBhajans(filter) {
+            grid.innerHTML = '';
+            const filtered = filter === 'all' ? bhajans : bhajans.filter(b => b.deity === filter);
+
+            filtered.forEach(bhajan => {
+                const card = document.createElement('div');
+                card.className = 'bhajan-card';
+                card.innerHTML = `
+                    <div class="bhajan-card-top">
+                        <div class="bhajan-icon"><i class="fas ${bhajan.icon}"></i></div>
+                        <span class="bhajan-deity">${bhajan.deity}</span>
+                        <h3>${bhajan.title}</h3>
+                        <div class="bhajan-language"><i class="fas fa-language"></i> ${bhajan.language}</div>
+                    </div>
+                    <div class="bhajan-card-body">
+                        <p>${bhajan.summary}</p>
+                        <div class="bhajan-audio-row">
+                            <i class="fas fa-music" style="color:var(--gold);"></i>
+                            <audio controls style="width:100%;">
+                                <source src="${bhajan.audioUrl || '#'}" type="audio/mpeg">
+                                ${bhajan.audioUrl ? '' : '<!-- Audio file placeholder -->'}
+                            </audio>
+                        </div>
+                        <button class="bhajan-lyrics-btn" data-id="${bhajan.id}">
+                            View Lyrics <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            // Attach lyrics button listeners
+            grid.querySelectorAll('.bhajan-lyrics-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const id = parseInt(this.dataset.id);
+                    const bhajan = bhajans.find(b => b.id === id);
+                    if (bhajan) openLyricsModal(bhajan);
+                });
+            });
+        }
+
+        function openLyricsModal(bhajan) {
+            const existing = document.querySelector('.lyrics-modal-overlay');
+            if (existing) existing.remove();
+
+            const overlay = document.createElement('div');
+            overlay.className = 'lyrics-modal-overlay';
+            overlay.innerHTML = `
+                <div class="lyrics-modal">
+                    <button class="lyrics-modal-close">&times;</button>
+                    <h2>${bhajan.title}</h2>
+                    <div class="lyrics-subtitle">${bhajan.deity} · ${bhajan.language}</div>
+                    <div class="lyrics-text"><span class="lyrics-om">ॐ</span>${bhajan.lyrics}</div>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+            document.body.style.overflow = 'hidden';
+            requestAnimationFrame(() => overlay.classList.add('active'));
+
+            const close = () => {
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+                setTimeout(() => overlay.remove(), 300);
+            };
+
+            overlay.querySelector('.lyrics-modal-close').addEventListener('click', close);
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) close();
+            });
+            document.addEventListener('keydown', function escHandler(e) {
+                if (e.key === 'Escape') { close(); document.removeEventListener('keydown', escHandler); }
+            });
+        }
+
+        // Filter buttons
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.filter;
+                renderBhajans(currentFilter);
+            });
+        });
+
+        // Initial render
+        renderBhajans('all');
+    })();
+    </script>
+</body>
+</html>
+
