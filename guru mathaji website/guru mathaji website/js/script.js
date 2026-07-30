@@ -89,37 +89,46 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ================================================================
-    // 4. MOBILE MENU
+    // 4. MOBILE MENU with Backdrop Overlay
     // ================================================================
-    menuToggle.addEventListener('click', () => {
-        menuToggle.classList.toggle('active');
-        nav.classList.toggle('active');
-        document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
-    });
+    // Create backdrop element
+    const navBackdrop = document.createElement('div');
+    navBackdrop.className = 'nav-backdrop';
+    navBackdrop.style.cssText = `
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+    `;
+    document.body.appendChild(navBackdrop);
+
+    function toggleMobileMenu(open) {
+        const isOpen = open !== undefined ? open : !nav.classList.contains('active');
+        menuToggle.classList.toggle('active', isOpen);
+        nav.classList.toggle('active', isOpen);
+        navBackdrop.style.opacity = isOpen ? '1' : '0';
+        navBackdrop.style.visibility = isOpen ? 'visible' : 'hidden';
+        document.body.style.overflow = isOpen ? 'hidden' : '';
+    }
+
+    menuToggle.addEventListener('click', () => toggleMobileMenu());
     
     navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            menuToggle.classList.remove('active');
-            nav.classList.remove('active');
-            document.body.style.overflow = '';
-        });
+        link.addEventListener('click', () => toggleMobileMenu(false));
     });
     
-    // Close on outside click
-    document.addEventListener('click', (e) => {
-        if (!header.contains(e.target) && nav.classList.contains('active')) {
-            menuToggle.classList.remove('active');
-            nav.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-    });
+    // Close on backdrop click
+    navBackdrop.addEventListener('click', () => toggleMobileMenu(false));
     
     // Close on Escape
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && nav.classList.contains('active')) {
-            menuToggle.classList.remove('active');
-            nav.classList.remove('active');
-            document.body.style.overflow = '';
+            toggleMobileMenu(false);
         }
     });
 
@@ -503,43 +512,57 @@ document.addEventListener('DOMContentLoaded', () => {
     // ================================================================
     // 15. VIDEO POPUP MODAL
     // ================================================================
-    function openVideoModal(videoId) {
+    function openVideoModal(videoId, videoType) {
         const existing = document.querySelector('.video-modal-overlay');
         if (existing) existing.remove();
 
         const overlay = document.createElement('div');
         overlay.className = 'video-modal-overlay';
-        overlay.innerHTML = `
-            <div class="video-modal-content">
-                <button class="video-modal-close">&times;</button>
-                <div class="video-fallback" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;">
-                    <a href="https://youtu.be/${videoId}" target="_blank" class="btn btn-primary" style="font-size:1rem;">
-                        <i class="fab fa-youtube"></i> <span>Open on YouTube</span>
-                    </a>
+        
+        let videoHtml = '';
+        
+        if (videoType === 'local') {
+            // Local video file
+            videoHtml = `
+                <div class="video-modal-content">
+                    <button class="video-modal-close">&times;</button>
+                    <video controls autoplay style="width:100%;height:100%;background:#000;">
+                        <source src="${videoId}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
                 </div>
-                <div class="video-iframe-wrap" style="position:absolute;inset:0;">
-                    <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&playsinline=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width:100%;height:100%;border:none;"></iframe>
+            `;
+        } else {
+            // YouTube video
+            videoHtml = `
+                <div class="video-modal-content">
+                    <button class="video-modal-close">&times;</button>
+                    <div class="video-iframe-wrap">
+                        <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&playsinline=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
                 </div>
-            </div>
-        `;
+            `;
+        }
+
+        overlay.innerHTML = videoHtml;
 
         document.body.appendChild(overlay);
         document.body.style.overflow = 'hidden';
         requestAnimationFrame(() => overlay.classList.add('active'));
 
-        // Fallback if embed fails (error 153 = embedding blocked or unavailable)
-        setTimeout(() => {
-            const iframeWrap = overlay.querySelector('.video-iframe-wrap');
-            const fallback = overlay.querySelector('.video-fallback');
-            if (iframeWrap && fallback) {
-                iframeWrap.style.display = 'none';
-                fallback.style.display = 'flex';
-            }
-        }, 5000);
-
         const close = () => {
             overlay.classList.remove('active');
             document.body.style.overflow = '';
+            // Stop playback
+            const video = overlay.querySelector('video');
+            const iframe = overlay.querySelector('iframe');
+            if (video) {
+                video.pause();
+                video.src = '';
+            }
+            if (iframe) {
+                iframe.src = '';
+            }
             setTimeout(() => overlay.remove(), 300);
         };
 
@@ -557,7 +580,8 @@ document.addEventListener('DOMContentLoaded', () => {
         el.addEventListener('click', function(e) {
             e.preventDefault();
             const videoId = this.dataset.videoId;
-            if (videoId) openVideoModal(videoId);
+            const videoType = this.dataset.videoType || 'youtube';
+            if (videoId) openVideoModal(videoId, videoType);
         });
     });
 
@@ -566,7 +590,8 @@ document.addEventListener('DOMContentLoaded', () => {
         el.addEventListener('click', function(e) {
             e.preventDefault();
             const videoId = this.dataset.videoId;
-            if (videoId) openVideoModal(videoId);
+            const videoType = this.dataset.videoType || 'youtube';
+            if (videoId) openVideoModal(videoId, videoType);
         });
     });
 
