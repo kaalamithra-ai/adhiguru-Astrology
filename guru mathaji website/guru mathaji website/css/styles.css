@@ -332,7 +332,7 @@ background:
     .hero {
         min-height: 100svh;
         height: auto;
-        padding: 20px 0;
+        padding: 0;
     }
 }
 
@@ -2326,15 +2326,16 @@ background:
     .nav-list { flex-direction:column; gap:18px; }
     .nav-link { font-size:1rem; padding: 8px 0; }
 
-    .hero-content { flex-direction:column; text-align:center; padding:90px 20px 40px; gap:24px; }
+    .hero-content { flex-direction:column; text-align:center; padding:75px 16px 30px; gap:16px; }
     .hero-actions { justify-content:center; }
     .hero-symbol { order:-1; }
-    .hero-om-container { width: 140px; height: 140px; }
-    .hero-om { font-size: 3rem; }
-    .hero-badge { margin-left:auto; margin-right:auto; }
-    .hero-greeting { font-size: 1.2rem; }
-    .hero-desc { font-size: 0.9rem; margin: 10px auto 20px; }
+    .hero-om-container { width: 90px; height: 90px; }
+    .hero-om { font-size: 2rem; }
+    .hero-badge { margin-left:auto; margin-right:auto; font-size: 0.65rem; padding: 4px 12px; }
+    .hero-greeting { font-size: 1rem; }
+    .hero-desc { font-size: 0.85rem; margin: 8px auto 16px; max-width: 100%; }
     .hero-scroll { display: none; }
+    .hero-bg::after { background: rgba(13, 8, 6, 0.3); }
 
     .section { padding:60px 0; }
     .section-head { margin-bottom: 40px; }
@@ -2381,11 +2382,13 @@ background:
     .video-title-telugu { font-size: 1.2rem; }
     .video-title-english { font-size: 1rem; }
     .video-title-block { padding: 16px; }
-    .hero-name { font-size: 2rem; }
-    .hero-greeting { font-size: 1.05rem; }
-    .btn { padding:11px 22px; font-size:0.82rem; }
+    .hero-name { font-size: clamp(1.5rem, 6vw, 1.8rem); }
+    .hero-greeting { font-size: 0.9rem; }
+    .btn { padding:10px 20px; font-size:0.8rem; }
     .hero-actions { flex-direction:column; align-items:stretch; width: 100%; }
     .hero-actions .btn { justify-content: center; }
+    .hero-content { padding: 65px 12px 20px; gap: 12px; }
+    .hero-bg::after { background: rgba(13, 8, 6, 0.25); }
     .about-experience { flex-direction:column; gap:16px; padding: 18px 20px; }
     .exp-divider { width:40px; height:1px; }
     .event-meta { flex-direction:column; gap:6px; }
