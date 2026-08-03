@@ -389,6 +389,20 @@ background:
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
+.hero-title-single {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: clamp(2.2rem, 8vw, 3.8rem);
+    font-weight: 700;
+    line-height: 1.05;
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    margin-bottom: 12px;
+}
 .hero-name::first-line {
     background: var(--gold-gradient);
     -webkit-background-clip: text;
