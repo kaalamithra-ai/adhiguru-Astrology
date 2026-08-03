@@ -259,8 +259,8 @@ input,textarea,button { font-family:inherit; outline:none; }
 .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
 
 /* ==========================================================================
-   HERO
-   ========================================================================== */
+    HERO
+    ========================================================================== */
 .hero {
     min-height: 100vh;
     min-height: 100dvh;
@@ -333,6 +333,11 @@ background:
         min-height: 100svh;
         height: auto;
         padding: 0;
+    }
+    .hero-bg {
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center top;
     }
 }
 
